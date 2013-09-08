@@ -19,13 +19,21 @@ function SaveSession()
     "NERDTree doesn't support session, so close before saving
     execute ':NERDTreeClose' 
     let project_name = GetProjectName()
-    execute 'mksession! ~/.vim/sessions/' . project_name
+	execute 'mksession! ~/.vim/sessions/' . project_name
 	execute 'wviminfo ~/.vim/sessions/' . project_name . '.viminfo'
 endfunction
 
 function RestoreSession()
     let session_path = expand('~/.vim/sessions/' . GetProjectName())
 	if filereadable(session_path)
+		"execute 'so ' . session_path
+		"if bufexists(1)
+		"  for l in range(1, bufnr('$'))
+		"	if bufwinnr(l) == -1
+		"	  exec 'sbuffer ' . l
+		"	endif
+		"  endfor
+		"endif
 		execute 'source ' . session_path
 		execute 'rviminfo ' . session_path . '.viminfo'
 	endif
@@ -38,7 +46,9 @@ endfunction
 nmap ssa :call SaveSession()
 nmap sso :call RestoreSession()
 autocmd VimLeave * call SaveSession()
-"autocmd VimEnter * call RestoreSession()
+autocmd VimEnter * call RestoreSession()
+
+set sessionoptions+=options "save options
 "=================================================
 
 "=================================================
@@ -58,8 +68,10 @@ syntax enable
 set background=dark
 colorscheme solarized
 hi Normal ctermbg=None
-set mouse=a
+"set mouse=a
 
+set modeline
+set modelines=2
 set nocompatible "be Improved
 filetype plugin indent on "开启文件类型检测
 
@@ -80,8 +92,10 @@ set autoindent "自动缩进
 set shiftwidth=4 "自动缩进为4个空格
 set tabstop=4 "TAB宽度4个空格
 set smarttab "按一下退格删除一个TAB位
-autocmd FileType python setlocal expandtab "对python将tab转换为tab
+autocmd FileType python setlocal expandtab "对python将tab转换为空格
 autocmd BufRead *.html,*.htm,*.css,*.js setlocal noexpandtab tabstop=2 shiftwidth=2 "对这些格式特殊处理
+
+set backspace=indent,eol,start
 
 autocmd FileType python setlocal foldmethod=indent "对python缩进折叠
 set foldlevel=100 "默认打开所有折叠
@@ -133,12 +147,15 @@ NeoBundle 'scrooloose/nerdtree' "目录树
 NeoBundle 'mattn/calendar-vim' "日历插件
 NeoBundle 'nvie/vim-flake8' "python代码检查，PEP8标准
 NeoBundle 'hynek/vim-python-pep8-indent' "python代码缩进PEP8标准
-"NeoBundle 'Lokaltog/powerline' "状态栏增强
+NeoBundle 'Lokaltog/powerline' "状态栏增强
 NeoBundle 'altercation/vim-colors-solarized' "Solarized配色
+NeoBundle 'Valloric/YouCompleteMe' "自动补全
+NeoBundle 'SirVer/ultisnips' "代码片段
 "NeoBundle 'tpope/vim-fugitive'
 "NeoBundle 'Lokaltog/vim-easymotion'
 "NeoBundle 'rstacruz/sparkup', {'rtp': 'vim/'}
 "*vim-scripts repos
+"NeoBundle 'load_template' "模板
 NeoBundle 'taglist.vim' "显示tag
 NeoBundle 'vimwiki' "wiki插件
 NeoBundle 'django.vim' "django语法高亮
@@ -201,4 +218,23 @@ map <F2> :silent! NERDTreeToggle<CR>
 " 当通过NERD Tree打开文件自动退出NERDTree界面
 let NERDTreeQuitOnOpen = 1 
 "let NERDTreeShowBookmarks=1
+"=================================================
 
+"=================================================
+"load_template
+"let g:template_load = 1
+"let g:template_tags_replacing = 1
+"let g:template_path='~/.vim/templates/'
+"=================================================
+
+"=================================================
+"powerline
+set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
+set guifont=PowerlineSymbols\ for\ Powerline
+let g:Powerline_symbols = 'fancy'
+set laststatus=2
+set encoding=utf-8 " Set default encoding to UTF-8 
+set langmenu=zh_CN.utf-8 
+language messages zh_CN.utf-8
+set fillchars+=stl:\ ,stlnc:\ 
+"=================================================
