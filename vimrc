@@ -1,130 +1,286 @@
-"=================================================
-" Auto Session Save/Restore
-function GetProjectName()
-    " Get the current editing file list, Unix only
-    let edit_files = split(system("ps -o command= -p " . getpid()))
-    if len(edit_files) >= 2
-        let project_path = edit_files[1]
-        if project_path[0] != '/'
-            let project_path = getcwd() . project_path
-        endif
-    else
-        let project_path = getcwd()
-    endif
+"=========================================
+" General settings {{{
+"=========================================
+syntax enable
+filetype plugin indent on "¿ªÆôÎÄ¼şÀàĞÍ¼ì²â
 
-    return substitute(project_path, '[/]', '', 'g')
-endfunction
+" ºöÂÔ´óĞ¡Ğ´
+set ignorecase
 
-function SaveSession()
-    "NERDTree doesn't support session, so close before saving
-    execute ':NERDTreeClose' 
-    let project_name = GetProjectName()
-	execute 'mksession! ~/.vim/sessions/' . project_name
-	execute 'wviminfo ~/.vim/sessions/' . project_name . '.viminfo'
-endfunction
+" get out of VI's compatible mode
+set nocompatible
 
-function RestoreSession()
-    let session_path = expand('~/.vim/sessions/' . GetProjectName())
-	if filereadable(session_path)
-		"execute 'so ' . session_path
-		"if bufexists(1)
-		"  for l in range(1, bufnr('$'))
-		"	if bufwinnr(l) == -1
-		"	  exec 'sbuffer ' . l
-		"	endif
-		"  endfor
-		"endif
-		execute 'source ' . session_path
-		execute 'rviminfo ' . session_path . '.viminfo'
-	endif
-	syntax enable
-	set background=dark
-	colorscheme solarized
-	hi Normal ctermbg=None
-endfunction
+" get platform
+let g:WIN="windows"
+let g:UNIX="unix"
+let g:LINUX="unix"
+if has("win32")||has("win64")
+	let g:os=WIN
+else
+	let g:os=UNIX
+endif
 
-nmap ssa :call SaveSession()
-nmap sso :call RestoreSession()
-autocmd VimLeave * call SaveSession()
-autocmd VimEnter * call RestoreSession()
+" line number
+set number
+set norelativenumber
+" highlight the current line
+set cursorline
 
-set sessionoptions+=options "save options
-"=================================================
-
-"=================================================
 " Persistent undo
 set undodir=~/.vim/undodir
 set undofile
 set undolevels=1000 "maximum number of changes that can be undone
 set undoreload=10000 "maximum number lines to save for undo on a buffer reload
 
+" Ä¬ÈÏ´ò¿ªËùÓĞÕÛµş
+set foldlevel=100
 
-
-"=================================================
-map <F12> :tabnew ~/.vimrc<CR>
-imap <F12> <ESC>:tabnew ~/.vimrc<CR>
-
-syntax enable
-set background=dark
-colorscheme solarized
-hi Normal ctermbg=None
-"set mouse=a
-
+" modeline
 set modeline
 set modelines=2
-set nocompatible "be Improved
-filetype plugin indent on "å¼€å¯æ–‡ä»¶ç±»å‹æ£€æµ‹
 
-set number  "æ˜¾ç¤ºè¡Œå·
-set cursorline "é«˜äº®å½“å‰è¡Œ
-set textwidth=79 "å®½79
-"tw+1åˆ—é«˜äº®(å¯¹python)
-autocmd FileType python set colorcolumn=+1 
-"é«˜äº®åˆ—é¢œè‰²è®¾ç½®
-highlight ColorColumn ctermbg=lightgrey guibg=lightgrey 
+set textwidth=79 "¿í79
 
-set hls "é«˜äº®æ˜¾ç¤ºè¢«æ‰¾åˆ°çš„æ–‡æœ¬,ä½¿ç”¨:nohlå–æ¶ˆé«˜äº® 
-set is "æœç´¢æ—¶å³æ—¶æ˜¾ç¤ºç»“æœ
+set hlsearch "¸ßÁÁÏÔÊ¾±»ÕÒµ½µÄÎÄ±¾,Ê¹ÓÃ:nohlÈ¡Ïû¸ßÁÁ 
+set is "ËÑË÷Ê±¼´Ê±ÏÔÊ¾½á¹û
 
-au BufNewFile,BufRead *.html setf htmldjango
-
-set autoindent "è‡ªåŠ¨ç¼©è¿›
-set shiftwidth=4 "è‡ªåŠ¨ç¼©è¿›ä¸º4ä¸ªç©ºæ ¼
-set tabstop=4 "TABå®½åº¦4ä¸ªç©ºæ ¼
-set smarttab "æŒ‰ä¸€ä¸‹é€€æ ¼åˆ é™¤ä¸€ä¸ªTABä½
-autocmd FileType python setlocal expandtab "å¯¹pythonå°†tabè½¬æ¢ä¸ºç©ºæ ¼
-autocmd BufRead *.html,*.htm,*.css,*.js setlocal noexpandtab tabstop=2 shiftwidth=2 "å¯¹è¿™äº›æ ¼å¼ç‰¹æ®Šå¤„ç†
+set autoindent "×Ô¶¯Ëõ½ø
+set shiftwidth=4 "×Ô¶¯Ëõ½øÎª4¸ö¿Õ¸ñ
+set tabstop=4 "TAB¿í¶È4¸ö¿Õ¸ñ
+set smarttab "°´Ò»ÏÂÍË¸ñÉ¾³ıÒ»¸öTABÎ»
 
 set backspace=indent,eol,start
+"	---------------------------------------
+"	 GUI {{{
+"	---------------------------------------
+set background=dark
+colorscheme solarized
+colorscheme jellybeans
+colorscheme molokai
+hi Normal ctermbg=None
+set mouse=n
+" font
+set guifont=Consolas:h12
+" clear boder
+set guioptions=r
+" ¸ßÁÁÁĞÑÕÉ«ÉèÖÃ
+highlight ColorColumn ctermbg=lightgrey guibg=lightgrey 
+"	 }}}
+"	---------------------------------------
+"
+"	---------------------------------------
+"	 Encoding under Windows {{{
+"	---------------------------------------
+set encoding=utf-8
+set fileencodings=utf-8,chinese,latin-1
+if has("win32")
+ set fileencoding=chinese
+else
+ set fileencoding=utf-8
+endif
+" ½â¾ö²Ëµ¥ÂÒÂë
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+" ½â¾öconsleÊä³öÂÒÂë
+language messages zh_CN.utf-8
+"	 }}}
+"	---------------------------------------
+" }}}
+"=========================================
+"
+"
+"=========================================
+" Mappings {{{
+"=========================================
 
-autocmd FileType python setlocal foldmethod=indent "å¯¹pythonç¼©è¿›æŠ˜å 
-set foldlevel=100 "é»˜è®¤æ‰“å¼€æ‰€æœ‰æŠ˜å 
+" map key leader
+let mapleader=","
 
-map <C-h> :tabp<CR>
-imap <C-h> <ESC>:tabp<CR>
-map <C-l> :tabn<CR>
-imap <C-l> <ESC>:tabn<CR>
+" system copy and paste
+nnoremap ,c "+y
+nnoremap ,p "+p
+
+" edit and save vimrc
+if os==WIN
+	nnoremap <leader>ev :vsplit ~\vimfiles\vimrc<CR>
+	nnoremap <leader>sv :source ~\vimfiles\vimrc<CR>
+elseif
+	nnoremap <leader>ev :vsplit ~/.vim/vimrc<CR>
+	nnoremap <leader>sv :source ~/.vim/vimrc<CR>
+endif
+
+" quoting things
+nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lell
+vnoremap <leader>" <esc>`<i"<esc>`>a"<esc>l
+nnoremap <leader>' viw<esc>a'<esc>hbi'<esc>lell
+vnoremap <leader>' <esc>`<i'<esc>`>a'<esc>l
+nnoremap <leader>( viw<esc>a(<esc>hbi)<esc>lell
+vnoremap <leader>( <esc>`<i(<esc>`>a)<esc>l
+
+" esc
+inoremap jk <esc>
+
+" navigating
+nnoremap H 0
+nnoremap L $
+nnoremap ,h 0
+nnoremap ,l $
+nnoremap ,j <c-d>
+nnoremap ,k <c-u>
+
+" tab navigating
+nnoremap <C-h> :tabp<CR>
+inoremap <C-h> <ESC>:tabp<CR>
+nnoremap <C-l> :tabn<CR>
+inoremap <C-l> <ESC>:tabn<CR>
+
+" empty search string
+nnoremap ,ns :let @/=''<CR>
+
+" operator-pending
+onoremap p i(
+onoremap b /return<cr>
+onoremap in( :<c-u>normal! f(vi(<cr>
+onoremap il( :<c-u>normal! F)vi(<cr>
+
+" fingers training
+inoremap <esc> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
+
+" auto \v
+nnoremap / /\v
+" }}}
+"=========================================
+"
+"
+"=========================================
+" File type settings {{{
+"=========================================
+"
+"	---------------------------------------
+"	 Vimscript file settings {{{
+"	---------------------------------------
+augroup filetype_vim
+	autocmd!
+	autocmd FileType vim setlocal foldmethod=marker
+augroup END
+"    }}}
+"	---------------------------------------
+"
+"	---------------------------------------
+"	 Python file settings {{{
+"	---------------------------------------
+augroup filetype_python
+	autocmd!
+	autocmd FileType python setlocal foldmethod=indent "¶ÔpythonËõ½øÕÛµş
+"    tw+1ÁĞ¸ßÁÁ(¶Ôpython)
+	autocmd FileType python set colorcolumn=+1 
+	autocmd FileType python setlocal expandtab "¶Ôpython½«tab×ª»»Îª¿Õ¸ñ
+augroup END
+"    }}}
+"	---------------------------------------
+"
+"	---------------------------------------
+"	 HTML file settings {{{
+"	---------------------------------------
+augroup filetype_html
+	autocmd!
+	autocmd BufNewFile,BufRead *.html setf htmldjango
+	autocmd BufRead *.html,*.htm,*.css,*.js setlocal noexpandtab tabstop=2 shiftwidth=2 "¶ÔÕâĞ©¸ñÊ½ÌØÊâ´¦Àí
+augroup END
+"    }}}
+"	---------------------------------------
+" }}}
+"=========================================
+
 
 "=================================================
-" omnicompleteè‡ªåŠ¨è¡¥å…¨
+" Auto Session Save/Restore {{{
+"function GetProjectName()
+"    " Get the current editing file list, Unix only
+"    let edit_files = split(system("ps -o command= -p " . getpid()))
+"    if len(edit_files) >= 2
+"        let project_path = edit_files[1]
+"        if project_path[0] != '/'
+"            let project_path = getcwd() . project_path
+"        endif
+"    else
+"        let project_path = getcwd()
+"    endif
+"
+"    return substitute(project_path, '[/]', '', 'g')
+"endfunction
+"
+"function SaveSession()
+"    "NERDTree doesn't support session, so close before saving
+"    execute ':NERDTreeClose' 
+"    let project_name = GetProjectName()
+"	execute 'mksession! ~/.vim/sessions/' . project_name
+"	execute 'wviminfo ~/.vim/sessions/' . project_name . '.viminfo'
+"endfunction
+"
+"function RestoreSession()
+"    let session_path = expand('~/.vim/sessions/' . GetProjectName())
+"	if filereadable(session_path)
+"		"execute 'so ' . session_path
+"		"if bufexists(1)
+"		"  for l in range(1, bufnr('$'))
+"		"	if bufwinnr(l) == -1
+"		"	  exec 'sbuffer ' . l
+"		"	endif
+"		"  endfor
+"		"endif
+"		execute 'source ' . session_path
+"		execute 'rviminfo ' . session_path . '.viminfo'
+"	endif
+"	syntax enable
+"	set background=dark
+"	colorscheme solarized
+"	hi Normal ctermbg=None
+"endfunction
+"
+"nmap ssa :call SaveSession()
+"nmap sso :call RestoreSession()
+"autocmd VimLeave * call SaveSession()
+"autocmd VimEnter * call RestoreSession()
+"
+"set sessionoptions+=options "save options
+"}}}
+"=================================================
+
+
+"=================================================
+" omnicomplete×Ô¶¯²¹È«
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 "=================================================
 
 "=================================================
-" <F5>è¿è¡Œä»£ç 
+" <F5>ÔËĞĞ´úÂë
 " 
 " python  
 map <F5> :w<CR>:!python % <CR>
 "=================================================
 
 "=================================================
-"NewBundle æ’ä»¶ç®¡ç†
+"NewBundle ²å¼ş¹ÜÀí
 if has('vim_starting')
-  set runtimepath+=~/.vim/bundle/neobundle.vim/
+	if os==LINUX
+		set runtimepath+=~/.vim/bundle/neobundle.vim/
+	elseif os==WIN
+		set runtimepath+=~\vimfiles\bundle\neobundle.vim\
+	endif
 endif
 
-call neobundle#rc(expand('~/.vim/bundle/'))
+if os==LINUX
+	call neobundle#rc(expand('~/.vim/bundle/'))
+elseif os==WIN
+	call neobundle#rc(expand('~\vimfiles\bundle\'))
+endif
+
 
 " Let NeoBundle manage NeoBundle
 NeoBundleFetch 'Shougo/neobundle.vim'
@@ -143,28 +299,29 @@ NeoBundle 'Shougo/vimproc', {
 "
 " Note: You don't set neobundle setting in .gvimrc!
 "*Original repos on github
-NeoBundle 'scrooloose/nerdtree' "ç›®å½•æ ‘
-NeoBundle 'mattn/calendar-vim' "æ—¥å†æ’ä»¶
-NeoBundle 'nvie/vim-flake8' "pythonä»£ç æ£€æŸ¥ï¼ŒPEP8æ ‡å‡†
-NeoBundle 'hynek/vim-python-pep8-indent' "pythonä»£ç ç¼©è¿›PEP8æ ‡å‡†
-NeoBundle 'Lokaltog/powerline' "çŠ¶æ€æ å¢å¼º
-NeoBundle 'altercation/vim-colors-solarized' "Solarizedé…è‰²
-NeoBundle 'Valloric/YouCompleteMe' "è‡ªåŠ¨è¡¥å…¨
-NeoBundle 'SirVer/ultisnips' "ä»£ç ç‰‡æ®µ
+NeoBundle 'scrooloose/nerdtree' "Ä¿Â¼Ê÷
+NeoBundle 'mattn/calendar-vim' "ÈÕÀú²å¼ş
+NeoBundle 'nvie/vim-flake8' "python´úÂë¼ì²é£¬PEP8±ê×¼
+NeoBundle 'hynek/vim-python-pep8-indent' "python´úÂëËõ½øPEP8±ê×¼
+NeoBundle 'Lokaltog/powerline' "×´Ì¬À¸ÔöÇ¿
+NeoBundle 'tomasr/molokai' "molokaiÅäÉ«
+NeoBundle 'nanotech/jellybeans.vim' "jellybeansÅäÉ«
+NeoBundle 'altercation/vim-colors-solarized' "SolarizedÅäÉ«
+"NeoBundle 'SirVer/ultisnips' "´úÂëÆ¬¶Î
 "NeoBundle 'tpope/vim-fugitive'
 "NeoBundle 'Lokaltog/vim-easymotion'
 "NeoBundle 'rstacruz/sparkup', {'rtp': 'vim/'}
 "*vim-scripts repos
-"NeoBundle 'load_template' "æ¨¡æ¿
-NeoBundle 'taglist.vim' "æ˜¾ç¤ºtag
-NeoBundle 'vimwiki' "wikiæ’ä»¶
-NeoBundle 'django.vim' "djangoè¯­æ³•é«˜äº®
+"NeoBundle 'load_template' "Ä£°å
+NeoBundle 'taglist.vim' "ÏÔÊ¾tag
+NeoBundle 'vimwiki' "wiki²å¼ş
+NeoBundle 'django.vim' "djangoÓï·¨¸ßÁÁ
 "NeoBundle 'L9'
 "NeoBundle 'FuzzyFinder'
 "NeoBundle 'rails.vim'
 "*Non github repos
 "NeoBundle 'http://conque.googlecode.com/svn/trunk/', {
-"	'name': 'conque'} "vimä¸­çš„shellï¼Œä¸æ˜¯å¾ˆå¥½ç”¨
+"	'name': 'conque'} "vimÖĞµÄshell£¬²»ÊÇºÜºÃÓÃ
 "NeoBundle 'git://git.wincent.com/command-t.git'
 "*gist repos
 "NeoBundle 'gist:Shougo/656148', {
@@ -174,6 +331,9 @@ NeoBundle 'django.vim' "djangoè¯­æ³•é«˜äº®
 "NeoBundle 'https://bitbucket.org/ns9tks/vim-fuzzyfinder'
 
 " ...
+if os==LINUX
+	NeoBundle 'Valloric/YouCompleteMe' "×Ô¶¯²¹È«
+endif
 
 filetype plugin indent on     " Required!
 "
@@ -188,7 +348,7 @@ NeoBundleCheck
 
 "=================================================
 "vim-flake8
-"let g:flake8_max_line_length=99 "æ¯è¡Œä»£ç é•¿åº¦å¢åŠ ä¸º99
+"let g:flake8_max_line_length=99 "Ã¿ĞĞ´úÂë³¤¶ÈÔö¼ÓÎª99
 "autocmd BufWritePost *.py call Flake8()
 "=================================================
 
@@ -199,23 +359,23 @@ map <C-F12> :!ctags -R <CR>
 
 "=================================================
 "taglist
-let Tlist_Exit_OnlyWindow=1 "åªæœ‰taglistçª—å£å­˜åœ¨æ—¶å…³é—­vim
-"let Tlist_Auto_Open=1 "æ‰“å¼€vimæ—¶è‡ªåŠ¨æ‰“å¼€taglistçª—å£ 
-let Tlist_Show_One_File=1 "åªæ˜¾ç¤ºä¸€ä¸ªæ–‡ä»¶çš„tag 
-let Tlist_Use_Right_Window=1 "åœ¨å³ä¾§æ˜¾ç¤ºçª—å£
+let Tlist_Exit_OnlyWindow=1 "Ö»ÓĞtaglist´°¿Ú´æÔÚÊ±¹Ø±Õvim
+"let Tlist_Auto_Open=1 "´ò¿ªvimÊ±×Ô¶¯´ò¿ªtaglist´°¿Ú 
+let Tlist_Show_One_File=1 "Ö»ÏÔÊ¾Ò»¸öÎÄ¼şµÄtag 
+let Tlist_Use_Right_Window=1 "ÔÚÓÒ²àÏÔÊ¾´°¿Ú
 "=================================================
 
 "=================================================
 "Pydiction
-let g:pydiction_location='~/.vim/bundle/Pydiction/complete-dict' "å­—å…¸æ–‡ä»¶è·¯å¾„
+let g:pydiction_location='~/.vim/bundle/Pydiction/complete-dict' "×ÖµäÎÄ¼şÂ·¾¶
 "=================================================
 
 "=================================================
 "NERD_tree
 "autocmd VimEnter * NERDTree
-" F2æ‰“å¼€/å…³é—­NERDtree
+" F2´ò¿ª/¹Ø±ÕNERDtree
 map <F2> :silent! NERDTreeToggle<CR>
-" å½“é€šè¿‡NERD Treeæ‰“å¼€æ–‡ä»¶è‡ªåŠ¨é€€å‡ºNERDTreeç•Œé¢
+" µ±Í¨¹ıNERD Tree´ò¿ªÎÄ¼ş×Ô¶¯ÍË³öNERDTree½çÃæ
 let NERDTreeQuitOnOpen = 1 
 "let NERDTreeShowBookmarks=1
 "=================================================
@@ -229,8 +389,12 @@ let NERDTreeQuitOnOpen = 1
 
 "=================================================
 "powerline
-set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
-set guifont=PowerlineSymbols\ for\ Powerline
+if os==LINUX
+	set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
+elseif os==WIN
+	set rtp+=~\vimfiles\bundle\powerline\powerline\bindings\vim
+endif
+"set guifont=PowerlineSymbols\ for\ Powerline
 let g:Powerline_symbols = 'fancy'
 set laststatus=2
 set encoding=utf-8 " Set default encoding to UTF-8 

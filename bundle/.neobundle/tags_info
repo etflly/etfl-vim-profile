@@ -1,11 +1,11 @@
-YouCompleteMe
 calendar-vim
 django.vim
+jellybeans.vim
+molokai
 neobundle.vim
 nerdtree
 powerline
 taglist.vim
-ultisnips
 vim-colors-solarized
 vim-flake8
 vim-python-pep8-indent
