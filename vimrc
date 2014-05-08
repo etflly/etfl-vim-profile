@@ -54,9 +54,9 @@ set backspace=indent,eol,start
 "	 GUI {{{
 "	---------------------------------------
 set background=dark
-colorscheme solarized
+"colorscheme solarized
 colorscheme jellybeans
-colorscheme molokai
+"colorscheme molokai
 hi Normal ctermbg=None
 set mouse=n
 " font
@@ -82,7 +82,7 @@ endif
 source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
 " 解决consle输出乱码
-language messages zh_CN.utf-8
+"language messages zh_CN.utf-8
 "	 }}}
 "	---------------------------------------
 " }}}
@@ -101,13 +101,8 @@ nnoremap ,c "+y
 nnoremap ,p "+p
 
 " edit and save vimrc
-if os==WIN
-	nnoremap <leader>ev :vsplit ~\vimfiles\vimrc<CR>
-	nnoremap <leader>sv :source ~\vimfiles\vimrc<CR>
-elseif
-	nnoremap <leader>ev :vsplit ~/.vim/vimrc<CR>
-	nnoremap <leader>sv :source ~/.vim/vimrc<CR>
-endif
+nnoremap <leader>ev :vsplit ~/.vim/vimrc<CR>
+nnoremap <leader>sv :source ~/.vim/vimrc<CR>
 
 " quoting things
 nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lell
@@ -281,7 +276,6 @@ elseif os==WIN
 	call neobundle#rc(expand('~\vimfiles\bundle\'))
 endif
 
-
 " Let NeoBundle manage NeoBundle
 NeoBundleFetch 'Shougo/neobundle.vim'
 
@@ -332,7 +326,7 @@ NeoBundle 'django.vim' "django语法高亮
 
 " ...
 if os==LINUX
-	NeoBundle 'Valloric/YouCompleteMe' "自动补全
+"	NeoBundle 'Valloric/YouCompleteMe' "自动补全
 endif
 
 filetype plugin indent on     " Required!
@@ -399,6 +393,6 @@ let g:Powerline_symbols = 'fancy'
 set laststatus=2
 set encoding=utf-8 " Set default encoding to UTF-8 
 set langmenu=zh_CN.utf-8 
-language messages zh_CN.utf-8
+"language messages zh_CN.utf-8
 set fillchars+=stl:\ ,stlnc:\ 
 "=================================================
