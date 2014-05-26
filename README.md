@@ -10,3 +10,9 @@ https://powerline.readthedocs.org/en/latest/installation/linux.html#font-install
 3. Run fc-cache -vf ~/.fonts to update your font cache.
 4. Move 10-powerline-symbols.conf to either ~/.fonts.conf.d/ or ~/.config/fontconfig/conf.d/, depending on your fontconfig version.
 5. If you don’t see the arrow symbols, please close all instances of your terminal emulator or gvim. You may also have to restart X for the changes to take effect. If you still don’t see the arrow symbols, please submit an issue on GitHub.
+
+
+~/.bashrc文件添加
+if [ "$TERM" == "xterm" ]; then
+    export TERM=xterm-256color
+fi
